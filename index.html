@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Obxia | Objetos, Conexão e Inteligência Aplicada</title>
+  <meta
+    name="description"
+    content="Obxia desenvolve soluções em IoT, dispositivos inteligentes, automação e sistemas embarcados para conectar objetos e transformar operações com inteligência aplicada."
+  >
+  <style>
+    :root {
+      --bg: #07111d;
+      --bg-soft: #0f1f31;
+      --panel: rgba(8, 18, 31, 0.74);
+      --line: rgba(132, 196, 255, 0.2);
+      --text: #ecf4ff;
+      --muted: #9db3cb;
+      --accent: #66e1c7;
+      --accent-strong: #13b8a3;
+      --highlight: #7ab8ff;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Helvetica Neue", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(122, 184, 255, 0.18), transparent 30%),
+        radial-gradient(circle at right 20%, rgba(19, 184, 163, 0.18), transparent 25%),
+        linear-gradient(160deg, #04101b 0%, #0b1827 45%, #07111d 100%);
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.55), transparent 92%);
+      pointer-events: none;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: min(1120px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .hero {
+      padding: 28px 0 96px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      padding: 12px 0 30px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--highlight), var(--accent));
+      color: #03111a;
+      box-shadow: 0 14px 28px rgba(102, 225, 199, 0.25);
+    }
+
+    nav {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 34px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--highlight);
+      background: rgba(14, 29, 45, 0.72);
+      font-size: 0.92rem;
+      backdrop-filter: blur(8px);
+    }
+
+    .hero h1 {
+      margin: 20px 0 18px;
+      font-size: clamp(2.8rem, 5vw, 5.4rem);
+      line-height: 0.95;
+      letter-spacing: -0.05em;
+      max-width: 11ch;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 58ch;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.8;
+    }
+
+    .cta-row {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 32px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 170px;
+      padding: 14px 22px;
+      border-radius: 14px;
+      font-weight: 700;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+
+    .button.primary {
+      background: linear-gradient(135deg, var(--accent), var(--highlight));
+      color: #03111a;
+      box-shadow: 0 18px 40px rgba(122, 184, 255, 0.24);
+    }
+
+    .button.secondary {
+      border: 1px solid var(--line);
+      background: rgba(11, 23, 37, 0.72);
+      color: var(--text);
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+    }
+
+    .hero-card {
+      position: relative;
+      padding: 28px;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: var(--panel);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+    }
+
+    .signal {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(122, 184, 255, 0.18);
+      inset: auto;
+    }
+
+    .signal.one {
+      width: 220px;
+      height: 220px;
+      top: 14%;
+      right: -70px;
+    }
+
+    .signal.two {
+      width: 320px;
+      height: 320px;
+      bottom: -120px;
+      left: -100px;
+    }
+
+    .dashboard {
+      display: grid;
+      gap: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .panel {
+      padding: 18px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .panel small,
+    .stat small {
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .panel strong,
+    .stat strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 1.4rem;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .stat {
+      padding: 18px;
+      border-radius: 20px;
+      background: rgba(5, 14, 23, 0.78);
+      border: 1px solid rgba(102, 225, 199, 0.12);
+    }
+
+    section {
+      padding: 36px 0 78px;
+    }
+
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      align-items: end;
+      margin-bottom: 28px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      letter-spacing: -0.04em;
+    }
+
+    .section-heading p {
+      margin: 0;
+      max-width: 55ch;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    .card,
+    .feature,
+    .contact-card {
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: rgba(10, 19, 30, 0.7);
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
+    }
+
+    .card {
+      padding: 22px;
+    }
+
+    .card h3,
+    .feature h3,
+    .contact-card h3 {
+      margin: 14px 0 10px;
+      font-size: 1.15rem;
+    }
+
+    .card p,
+    .feature p,
+    .contact-card p,
+    .contact-card li {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, rgba(122, 184, 255, 0.2), rgba(102, 225, 199, 0.22));
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .feature {
+      padding: 26px;
+    }
+
+    .contact-wrap {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 18px;
+    }
+
+    .contact-card {
+      padding: 28px;
+    }
+
+    .contact-card ul {
+      padding-left: 18px;
+      margin: 18px 0 0;
+    }
+
+    footer {
+      padding: 0 0 36px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    .fade-up {
+      opacity: 0;
+      transform: translateY(24px);
+      animation: fadeUp 0.85s ease forwards;
+    }
+
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.2s; }
+    .delay-3 { animation-delay: 0.3s; }
+    .delay-4 { animation-delay: 0.4s; }
+
+    @keyframes fadeUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .contact-wrap,
+      .section-heading,
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cards {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .section-heading {
+        align-items: start;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero {
+        padding-bottom: 70px;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      nav {
+        gap: 12px;
+      }
+
+      .cards,
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-card,
+      .card,
+      .feature,
+      .contact-card {
+        border-radius: 20px;
+      }
+
+      .button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="container">
+      <div class="topbar fade-up">
+        <a class="brand" href="#inicio" aria-label="Obxia">
+          <span class="brand-mark">O</span>
+          <span>Obxia</span>
+        </a>
+        <nav>
+          <a href="#solucoes">Soluções</a>
+          <a href="#tecnologia">Tecnologia</a>
+          <a href="#atuacao">Atuação</a>
+          <a href="#contato">Contato</a>
+        </nav>
+      </div>
+
+      <div class="hero-grid" id="inicio">
+        <div>
+          <span class="eyebrow fade-up delay-1">Objetos, conexão e inteligência aplicada</span>
+          <h1 class="fade-up delay-2">IoT com engenharia para o mundo real.</h1>
+          <p class="fade-up delay-3">
+            A Obxia projeta e integra soluções em internet das coisas, dispositivos inteligentes,
+            automação industrial e sistemas embarcados para operações que precisam de dados confiáveis,
+            resposta em tempo real e inteligência aplicada no campo.
+          </p>
+          <div class="cta-row fade-up delay-4">
+            <a class="button primary" href="#contato">Falar com a Obxia</a>
+            <a class="button secondary" href="#solucoes">Explorar soluções</a>
+          </div>
+        </div>
+
+        <aside class="hero-card fade-up delay-3" aria-label="Painel de capacidades">
+          <span class="signal one"></span>
+          <span class="signal two"></span>
+          <div class="dashboard">
+            <div class="panel">
+              <small>Ecossistema conectado</small>
+              <strong>Sensores, gateways e software operando em conjunto</strong>
+            </div>
+            <div class="stats">
+              <div class="stat">
+                <small>Telemetria</small>
+                <strong>Monitoramento contínuo</strong>
+              </div>
+              <div class="stat">
+                <small>Automação</small>
+                <strong>Decisões mais rápidas</strong>
+              </div>
+              <div class="stat">
+                <small>Embarcados</small>
+                <strong>Hardware sob medida</strong>
+              </div>
+              <div class="stat">
+                <small>Integração</small>
+                <strong>Dados acionáveis</strong>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section id="solucoes">
+      <div class="container">
+        <div class="section-heading fade-up">
+          <div>
+            <h2>Soluções para conectar, medir e agir</h2>
+          </div>
+          <p>
+            Unimos hardware, firmware, conectividade e plataformas de supervisão para criar sistemas
+            robustos, escaláveis e prontos para ambientes exigentes.
+          </p>
+        </div>
+
+        <div class="cards">
+          <article class="card fade-up delay-1">
+            <div class="icon">IoT</div>
+            <h3>Internet das Coisas</h3>
+            <p>
+              Arquiteturas conectadas para coleta de dados, rastreamento de ativos, telemetria
+              e visibilidade operacional ponta a ponta.
+            </p>
+          </article>
+
+          <article class="card fade-up delay-2">
+            <div class="icon">AI</div>
+            <h3>Dispositivos Inteligentes</h3>
+            <p>
+              Equipamentos capazes de monitorar, interpretar eventos e responder com mais autonomia
+              em ambientes industriais, urbanos ou corporativos.
+            </p>
+          </article>
+
+          <article class="card fade-up delay-3">
+            <div class="icon">AU</div>
+            <h3>Automação</h3>
+            <p>
+              Fluxos automatizados para reduzir falhas, acelerar decisões e integrar sensores,
+              atuadores, painéis e sistemas de gestão.
+            </p>
+          </article>
+
+          <article class="card fade-up delay-4">
+            <div class="icon">FW</div>
+            <h3>Sistemas Embarcados</h3>
+            <p>
+              Desenvolvimento de firmware e eletrônica aplicada para produtos confiáveis,
+              eficientes e preparados para operação contínua.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="tecnologia">
+      <div class="container">
+        <div class="section-heading fade-up">
+          <div>
+            <h2>Tecnologia desenhada para campo e escala</h2>
+          </div>
+          <p>
+            A base da Obxia é transformar sensores e equipamentos em fontes de inteligência operacional,
+            conectando dados físicos a decisões digitais com engenharia aplicada.
+          </p>
+        </div>
+
+        <div class="feature-grid">
+          <article class="feature fade-up delay-1">
+            <h3>Da borda à nuvem</h3>
+            <p>
+              Projetamos soluções que começam no hardware, passam pelo processamento local e chegam
+              às plataformas de análise com segurança, rastreabilidade e alta disponibilidade.
+            </p>
+          </article>
+
+          <article class="feature fade-up delay-2">
+            <h3>Integração inteligente</h3>
+            <p>
+              Conectamos dispositivos, protocolos e aplicações para que os dados façam sentido no
+              contexto da operação, sem criar complexidade desnecessária.
+            </p>
+          </article>
+
+          <article class="feature fade-up delay-3">
+            <h3>Automação orientada por dados</h3>
+            <p>
+              Estruturamos eventos, alertas e comandos automáticos para que a infraestrutura responda
+              mais rápido a desvios, consumo, presença, temperatura e desempenho.
+            </p>
+          </article>
+
+          <article class="feature fade-up delay-4">
+            <h3>Engenharia sob medida</h3>
+            <p>
+              Cada projeto parte do problema real: requisitos elétricos, conectividade, consumo,
+              durabilidade, manutenção e expansão futura.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="atuacao">
+      <div class="container">
+        <div class="section-heading fade-up">
+          <div>
+            <h2>Onde a Obxia gera impacto</h2>
+          </div>
+          <p>
+            Nossas soluções apoiam operações que precisam de monitoramento preciso, automação confiável
+            e inteligência embarcada para ganhar eficiência, previsibilidade e controle.
+          </p>
+        </div>
+
+        <div class="cards">
+          <article class="card fade-up delay-1">
+            <div class="icon">01</div>
+            <h3>Indústria e manufatura</h3>
+            <p>
+              Supervisão de ativos, medição de variáveis críticas, manutenção preditiva
+              e integração com processos produtivos.
+            </p>
+          </article>
+
+          <article class="card fade-up delay-2">
+            <div class="icon">02</div>
+            <h3>Infraestrutura e energia</h3>
+            <p>
+              Monitoramento remoto, sensoriamento ambiental, gestão de consumo
+              e controle de instalações distribuídas.
+            </p>
+          </article>
+
+          <article class="card fade-up delay-3">
+            <div class="icon">03</div>
+            <h3>Cidades e edifícios inteligentes</h3>
+            <p>
+              Automação predial, controle de acesso, iluminação eficiente,
+              ocupação de ambientes e dados para operação urbana.
+            </p>
+          </article>
+
+          <article class="card fade-up delay-4">
+            <div class="icon">04</div>
+            <h3>Produtos conectados</h3>
+            <p>
+              Desenvolvimento de dispositivos embarcados e plataformas conectadas para empresas
+              que querem levar inteligência ao próprio produto.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="contato">
+      <div class="container">
+        <div class="contact-wrap">
+          <article class="contact-card fade-up">
+            <h3>Obxia</h3>
+            <p>
+              Objetos, conexão e inteligência aplicada para transformar operações físicas em sistemas
+              mais eficientes, observáveis e preparados para evolução contínua.
+            </p>
+          </article>
+
+          <article class="contact-card fade-up delay-2">
+            <h3>Próximos passos</h3>
+            <p>
+              Se você quer estruturar uma solução em IoT, criar um dispositivo inteligente ou evoluir
+              um processo de automação, a Obxia pode desenhar a base técnica certa para o projeto.
+            </p>
+            <ul>
+              <li>Arquitetura de soluções conectadas</li>
+              <li>Desenvolvimento de hardware e firmware</li>
+              <li>Integração entre sensores, rede e software</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>Obxia © 2026 | Objetos, conexão e inteligência aplicada</p>
+    </div>
+  </footer>
+</body>
+</html>
